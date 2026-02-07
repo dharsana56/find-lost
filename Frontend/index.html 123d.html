@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost&Found AI - Smart Item Recovery</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Lost & Found<span>AI</span></div>
+            <ul>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#browse">Browse Items</a></li>
+                <li><button class="btn-signin">Sign In</button></li>
+                <li><button class="btn-primary" onclick="openModal('lostModal')">Get Started</button></li>
+            </ul>
+        </nav>
+    </header>
+<h2>Lost & Found AI Matcher</h2>
+
+<label>Lost Item Description</label>
+<textarea id="lostText" placeholder="Describe lost item..."></textarea>
+
+<label>Found Item Description</label>
+<textarea id="foundText" placeholder="Describe found item..."></textarea>
+
+<button onclick="matchItems()">Match Items</button>
+
+<div id="result"></div>
+
+<script src="script.js"></script>
+
+    <section class="hero">
+        <div class="hero-content">
+            <span class="badge">AI-Powered Recovery System</span>
+            <h1>Lost Something? <span>We'll Find It.</span></h1>
+            <p>AI-powered matching, verified ownership, and secure handovers. The smartest way to reunite people with their belongings.</p>
+            <div class="hero-btns">
+                <button class="btn-primary" onclick="openModal('lostModal')">Report Lost Item <i class="fas fa-arrow-right"></i></button>
+                <button class="btn-secondary" onclick="openModal('foundModal')">Found Something?</button>
+            </div>
+            <div class="stats">
+                <div><strong>98%</strong><br>Match Accuracy</div>
+                <div><strong>24hrs</strong><br>Avg. Recovery</div>
+                <div><strong>50K+</strong><br>Items Returned</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="how-it-works">
+        <div class="section-header">
+            <span class="subtitle">Simple Process</span>
+            <h2>How It Works</h2>
+            <p>Four simple steps to recover your belongings safely and securely</p>
+        </div>
+        <div class="steps-container">
+            <div class="step-card">
+                <div class="step-icon blue-bg"><i class="fas fa-file-alt"></i><span class="step-number">01</span></div>
+                <h3>Report Item</h3>
+                <p>Describe your lost or found item with details and location. AI extracts key features automatically.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon orange-bg"><i class="fas fa-microchip"></i><span class="step-number">02</span></div>
+                <h3>AI Matching</h3>
+                <p>Our intelligent system analyzes descriptions and images to find potential matches in real-time.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon green-bg"><i class="fas fa-check-circle"></i><span class="step-number">03</span></div>
+                <h3>Verify Ownership</h3>
+                <p>Answer verification questions only the true owner would know. No more false claims.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon purple-bg"><i class="fas fa-handshake"></i><span class="step-number">04</span></div>
+                <h3>Secure Handover</h3>
+                <p>Coordinate a safe exchange with our built-in messaging and location suggestions.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features-section">
+        <h2 class="text-center">Everything You Need</h2>
+        <div class="features-container">
+            <div class="feature-card">
+                <div class="icon-circle"><i class="fas fa-brain"></i></div>
+                <h4>AI-Powered Matching</h4>
+                <p>Advanced algorithms analyze item descriptions and images to find matches with 98% accuracy.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon-circle"><i class="fas fa-shield-alt"></i></div>
+                <h4>Ownership Verification</h4>
+                <p>Secret questions and photo verification ensure items go to their rightful owners.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon-circle"><i class="fas fa-bell"></i></div>
+                <h4>Instant Notifications</h4>
+                <p>Get real-time alerts when a potential match is found for your lost item.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="browse" class="browse-section">
+        <h2 class="text-center">Recently Reported Items</h2>
+        <div class="item-grid" id="item-container"></div>
+        <div class="text-center"><button class="btn-outline">View All Items</button></div>
+    </section>
+
+    <div id="lostModal" class="modal">
+        <div class="modal-content report-form">
+            <span class="close" onclick="closeModal('lostModal')">&times;</span>
+            <h2><i class="fas fa-search"></i> Report Lost Item</h2>
+            <form id="lostForm">
+                <input type="text" placeholder="Item Name (e.g., iPhone 15)" required>
+                <select required><option value="">Select Category</option><option value="electronics">Electronics</option><option value="wallets">Wallets/Bags</option></select>
+                <input type="text" placeholder="Last Seen Location" required>
+                <textarea placeholder="Describe the item (color, brand, etc.)..." rows="4"></textarea>
+                <button type="submit" class="btn-primary">Post Lost Report</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="foundModal" class="modal">
+        <div class="modal-content report-form">
+            <span class="close" onclick="closeModal('foundModal')">&times;</span>
+            <h2><i class="fas fa-hand-holding-heart"></i> Report Found Item</h2>
+            <form id="foundForm">
+                <input type="text" placeholder="What did you find?" required>
+                <input type="text" placeholder="Found Location" required>
+                <textarea placeholder="Provide details for matching..." rows="4"></textarea>
+                <button type="submit" class="btn-primary" style="background-color: #22c55e; color: white;">Submit Found Item</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

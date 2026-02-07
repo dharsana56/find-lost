@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up | Lost & Found AI</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+  <header class="header">
+    <nav class="nav">
+      <div class="logo">Lost & Found <span>AI</span></div>
+
+      <ul class="nav-links">
+        <li><a href="./index.html">Home</a></li>
+        <li><a href="./lost.html">Report Lost</a></li>
+        <li><a href="./found.html">Report Found</a></li>
+        <li><a href="./ai.html">AI Matching</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a class="btn btn-outline" href="./signin.html?role=lost">Lost Login</a>
+        <a class="btn btn-primary" href="./signin.html?role=found">Found Login</a>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h1 class="page-title">Create Account</h1>
+    <p class="sub">Your account is required to report and claim items securely.</p>
+
+    <div class="form">
+      <div class="row">
+        <label>Full Name</label>
+        <input id="name" type="text" placeholder="Your Name" />
+      </div>
+
+      <div class="row">
+        <label>Email</label>
+        <input id="email" type="email" placeholder="you@example.com" />
+      </div>
+
+      <div class="row">
+        <label>Password (min 6 chars)</label>
+        <input id="password" type="password" placeholder="••••••••" />
+      </div>
+
+      <div class="row">
+        <label>Account Type</label>
+        <select id="role">
+          <option value="lost">Lost User (reports lost items)</option>
+          <option value="found">Found User (reports found items)</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <a class="btn btn-secondary" href="./signin.html">Already have an account?</a>
+        <button class="btn btn-primary" type="button" id="signupBtn">Create Account</button>
+      </div>
+
+      <div id="msg" class="note" style="display:none;"></div>
+    </div>
+  </div>
+
+  <footer class="footer">© Lost & Found AI — Smart Recovery System</footer>
+
+  
+ <script src="./script.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const msg = document.getElementById("msg");
+  const show = (t, ok=true) => {
+    msg.style.display = "block";
+    msg.innerHTML = ok ? `✅ ${t}` : `❌ ${t}`;
+  };
+
+  document.getElementById("signupBtn").addEventListener("click", () => {
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim().toLowerCase();
+    const password = document.getElementById("password").value.trim();
+    const role = document.getElementById("role").value;
+
+    if (!name || !email || !password) return show("Fill all fields.", false);
+    if (password.length < 6) return show("Password must be at least 6 characters.", false);
+
+    const users = JSON.parse(localStorage.getItem("lf_users") || "{}");
+    if (users[email]) return show("Account already exists. Please sign in.", false);
+
+    users[email] = { name, email, password, role };
+    localStorage.setItem("lf_users", JSON.stringify(users));
+
+    show("Account created! Redirecting to sign in...");
+    setTimeout(() => location.href = "./signin.html?role=" + role, 700);
+  });
+});
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Report Found | Lost & Found AI</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+  <header class="header">
+    <nav class="nav">
+      <div class="logo">Lost & Found <span>AI</span></div>
+
+      <ul class="nav-links">
+        <li><a href="./index.html">Home</a></li>
+        <li><a href="./lost.html">Report Lost</a></li>
+        <li><a href="./found.html">Report Found</a></li>
+        <li><a href="./ai.html">AI Matching</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a class="btn btn-secondary" href="./signin.html?role=found">Sign In</a>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h1 class="page-title">Report Found Item</h1>
+    <p class="sub">Upload a clear photo and location. Recent found reports will appear below.</p>
+
+    <div class="form">
+      <div class="row">
+        <label>Item Type</label>
+        <input id="foundType" type="text" placeholder="Phone / Wallet / Keys" />
+      </div>
+
+      <div class="row">
+        <label>Description</label>
+        <textarea id="foundDesc" rows="6" placeholder="Example: Found blue Samsung phone with brown kitty case..."></textarea>
+      </div>
+
+      <div class="row">
+        <label>Found At (Location)</label>
+        <input id="foundAt" type="text" placeholder="Cafeteria / Library / Block corridor" />
+      </div>
+
+      <div class="row">
+        <label>Upload Item Photo</label>
+        <input id="foundImage" type="file" accept="image/*" />
+      </div>
+
+      <div class="row" id="imgPreviewBox" style="display:none;">
+        <label>Preview</label>
+        <img id="foundPreview" alt="Preview" style="max-width:100%; border-radius:14px; border:1px solid rgba(255,255,255,0.12);" />
+      </div>
+
+      <div class="row">
+        <label>Handed Over To</label>
+        <input id="foundHanded" type="text" placeholder="Security office / Admin desk" />
+      </div>
+
+      <div class="form-actions">
+        <a class="btn btn-secondary" href="./ai.html">Go to AI Matching</a>
+        <button class="btn btn-primary" type="button" id="saveFound">Submit Found Report</button>
+      </div>
+
+      <div class="note">
+        <b>Security note:</b> Items are returned only after ownership verification.
+      </div>
+    </div>
+
+    <h2 style="text-align:center; margin-top:22px;">Recent Found Reports</h2>
+    <p class="sub">Latest found items. Click “Track / Claim” to update status.</p>
+    <div id="recentFoundList" style="display:grid; gap:14px; margin-top:12px;"></div>
+  </div>
+
+  <footer class="footer">© Lost & Found AI — Smart Recovery System</footer>
+
+  <script src="./script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const fileInput = document.getElementById("foundImage");
+      const previewBox = document.getElementById("imgPreviewBox");
+      const previewImg = document.getElementById("foundPreview");
+      let selectedImageBase64 = "";
+
+      if (fileInput) {
+        fileInput.addEventListener("change", async () => {
+          const file = fileInput.files && fileInput.files[0];
+          if (!file) return;
+          selectedImageBase64 = await fileToBase64(file);
+          previewImg.src = selectedImageBase64;
+          previewBox.style.display = "block";
+        });
+      }
+
+      document.getElementById("saveFound").addEventListener("click", () => {
+        const payload = {
+          id: makeCaseId("F"),
+          itemType: document.getElementById("foundType").value.trim(),
+          description: document.getElementById("foundDesc").value.trim(),
+          foundAt: document.getElementById("foundAt").value.trim(),
+          handedTo: document.getElementById("foundHanded").value.trim(),
+          imageBase64: selectedImageBase64 || "",
+          status: "FOUND_REPORTED",
+          createdAt: new Date().toISOString()
+        };
+
+        if (!payload.itemType || !payload.description || !payload.foundAt) {
+          alert("Please enter Item Type, Description and Found At location");
+          return;
+        }
+
+        const list = JSON.parse(localStorage.getItem("found_reports") || "[]");
+        list.unshift(payload);
+        localStorage.setItem("found_reports", JSON.stringify(list));
+
+        alert("Found report saved. Case ID: " + payload.id);
+
+        document.getElementById("foundType").value = "";
+        document.getElementById("foundDesc").value = "";
+        document.getElementById("foundAt").value = "";
+        document.getElementById("foundHanded").value = "";
+        if (fileInput) fileInput.value = "";
+        selectedImageBase64 = "";
+        previewBox.style.display = "none";
+
+        renderRecentFound();
+      });
+
+      renderRecentFound();
+    });
+  </script>
+</body>
+</html>

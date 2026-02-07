@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tracking & Claim | Lost & Found AI</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+  <header class="header">
+    <nav class="nav">
+      <div class="logo">Lost & Found <span>AI</span></div>
+
+      <ul class="nav-links">
+        <li><a href="./index.html">Home</a></li>
+        <li><a href="./lost.html">Report Lost</a></li>
+        <li><a href="./found.html">Report Found</a></li>
+        <li><a href="./ai.html">AI Matching</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a class="btn btn-outline" href="./signin.html?role=lost">Lost Login</a>
+        <a class="btn btn-primary" href="./signin.html?role=found">Found Login</a>
+        <a class="btn btn-secondary" href="./signup.html">Sign Up</a>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h1 class="page-title">Tracking & Claim Verification</h1>
+    <p class="sub">Owner must provide proof → Security approves → Mark returned.</p>
+
+    <div id="caseCard" class="card"></div>
+
+    <div class="form" style="margin-top:16px;">
+      <h2 style="margin:0 0 10px;">Owner Proof</h2>
+      <p style="margin:0 0 14px;color:rgba(241,245,255,0.72);line-height:1.6;">
+        Enter details only the real owner would know (case pattern, scratches, sticker, wallpaper, crack location).
+      </p>
+
+      <div class="row">
+        <label>Proof 1</label>
+        <input id="proof1" type="text" placeholder="Example: kitty case / sticker / top-right crack" />
+      </div>
+
+      <div class="row">
+        <label>Proof 2</label>
+        <input id="proof2" type="text" placeholder="Example: landscape wallpaper / chipped glass" />
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" type="button" id="btnVerify">Verify Proof</button>
+        <button class="btn btn-secondary" type="button" id="btnApprove">Approve (Security)</button>
+        <button class="btn btn-outline" type="button" id="btnReturned">Mark Returned</button>
+      </div>
+
+      <div id="msg" class="note" style="display:none; margin-top:14px;"></div>
+    </div>
+  </div>
+
+  <footer class="footer">© Lost & Found AI — Smart Recovery System</footer>
+
+  <script>
+    // ===== Helpers =====
+    function escapeHtml(s = "") {
+      return s.replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[c]));
+    }
+
+    function getCaseIdFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("case");
+    }
+
+    function getFoundReports() {
+      return JSON.parse(localStorage.getItem("found_reports") || "[]");
+    }
+
+    function saveFoundReports(list) {
+      localStorage.setItem("found_reports", JSON.stringify(list));
+    }
+
+    function showMsg(text, ok = true) {
+      const box = document.getElementById("msg");
+      box.style.display = "block";
+      box.innerHTML = ok ? `✅ ${escapeHtml(text)}` : `❌ ${escapeHtml(text)}`;
+    }
+
+    function renderCaseCard(item) {
+      const card = document.getElementById("caseCard");
+      if (!item) {
+        card.innerHTML = `
+          <b>Case not found.</b><br/>
+          Open this page from Found Reports / AI page using Track / Claim button.
+          <div style="margin-top:10px;">
+            <a class="btn btn-secondary" href="./found.html">Back to Found</a>
+          </div>
+        `;
+        return;
+      }
+
+      const img = item.imageBase64
+        ? `<img src="${item.imageBase64}" alt="Found item"
+              style="width:100%; max-height:260px; object-fit:cover; border-radius:14px;
+                     border:1px solid rgba(255,255,255,0.12); margin-top:12px;">`
+        : "";
+
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+          <div>
+            <div style="font-size:18px;font-weight:900;">${escapeHtml(item.itemType || "Found Item")}</div>
+            <div style="color:rgba(241,245,255,0.75);font-weight:800;">Case ID: ${escapeHtml(item.id || "")}</div>
+            <div style="color:rgba(241,245,255,0.75);">Status: <b>${escapeHtml(item.status || "")}</b></div>
+          </div>
+          <a class="btn btn-secondary" href="./found.html">Back to Found</a>
+        </div>
+
+        <div style="margin-top:10px;color:rgba(241,245,255,0.78);line-height:1.7;">
+          ${escapeHtml(item.description || "")}
+        </div>
+
+        ${img}
+
+        <div style="margin-top:10px;color:rgba(241,245,255,0.75);">
+          Handed to: <b>${escapeHtml(item.handedTo || "Not mentioned")}</b>
+        </div>
+      `;
+    }
+
+    function verifyProof(foundText, p1, p2) {
+      const t = (foundText || "").toLowerCase();
+      const a = (p1 || "").toLowerCase().trim();
+      const b = (p2 || "").toLowerCase().trim();
+      if (!a || !b) return { ok: false, reason: "Both proof fields are required." };
+
+      const match1 = t.includes(a);
+      const match2 = t.includes(b);
+
+      
+      return { ok: (match1 || match2), match1, match2 };
+    }
+
+    
+    document.addEventListener("DOMContentLoaded", () => {
+      const caseId = getCaseIdFromUrl();
+      const btnVerify = document.getElementById("btnVerify");
+      const btnApprove = document.getElementById("btnApprove");
+      const btnReturned = document.getElementById("btnReturned");
+
+      
+      console.log("Tracking loaded ✅, case:", caseId);
+
+      let list = getFoundReports();
+      let idx = list.findIndex(x => x.id === caseId);
+      let item = idx >= 0 ? list[idx] : null;
+
+      renderCaseCard(item);
+
+      if (!item) {
+        showMsg("Open tracking from a report (Track / Claim) so case id is present.", false);
+        return;
+      }
+
+      btnVerify.addEventListener("click", () => {
+        const p1 = document.getElementById("proof1").value;
+        const p2 = document.getElementById("proof2").value;
+
+        const res = verifyProof(item.description, p1, p2);
+
+        item.claimProof = { proof1: p1, proof2: p2 };
+
+        if (!res.ok) {
+          item.status = "CLAIM_REQUESTED";
+          list[idx] = item; saveFoundReports(list);
+          renderCaseCard(item);
+          showMsg(res.reason, false);
+          return;
+        }
+
+        item.status = "PROOF_VERIFIED";
+        list[idx] = item; saveFoundReports(list);
+        renderCaseCard(item);
+        showMsg("Proof verified. Security can approve return.", true);
+      });
+
+      btnApprove.addEventListener("click", () => {
+        if (item.status !== "PROOF_VERIFIED") {
+          showMsg("Cannot approve until proof is verified.", false);
+          return;
+        }
+        item.status = "VERIFIED_APPROVED";
+        list[idx] = item; saveFoundReports(list);
+        renderCaseCard(item);
+        showMsg("Approved. Proceed with secure handover at specified location.", true);
+      });
+
+      btnReturned.addEventListener("click", () => {
+        if (item.status !== "VERIFIED_APPROVED") {
+          showMsg("Cannot mark returned until approved.", false);
+          return;
+        }
+        item.status = "RETURNED";
+        list[idx] = item; saveFoundReports(list);
+        renderCaseCard(item);
+        showMsg("Item returned successfully. Case closed.", true);
+      });
+    });
+  </script>
+</body>
+</html>

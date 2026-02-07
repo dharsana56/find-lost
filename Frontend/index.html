@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lost & Found AI</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+  <header class="header">
+    <nav class="nav">
+      <div class="logo">Lost & Found <span>AI</span></div>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="lost.html">Report Lost</a></li>
+        <li><a href="found.html">Report Found</a></li>
+        <li><a href="ai.html">AI Matching</a></li>
+      </ul>
+
+     <div class="nav-actions">
+  <a class="btn btn-outline" href="signin.html?role=lost">Lost Login</a>
+  <a class="btn btn-primary" href="signin.html?role=found">Found Login</a>
+  <a class="btn btn-secondary" href="signup.html">Sign Up</a>
+</div>
+
+    </nav>
+  </header>
+
+  <div class="container">
+    <section class="hero">
+      <span class="badge">Hackathon Prototype • Role-based login</span>
+
+      <h1>Report. Match. <span>Recover.</span></h1>
+
+      <p>
+        Lost users and Found users have separate login roles.
+        This prevents fake claims and makes the flow safer.
+      </p>
+
+      <div class="actions">
+        <a class="btn btn-primary" href="lost.html">Go to Lost Report</a>
+        <a class="btn btn-secondary" href="found.html">Go to Found Report</a>
+        <a class="btn btn-outline" href="ai.html">Open AI Matching</a>
+        <li><a href="./heatmap.html">Heatmap</a></li>
+      </div>
+
+      <div class="card">
+        <b>Security idea:</b> Role-based access + verification before handover.
+      </div>
+    </section>
+  </div>
+
+  <footer class="footer">
+    © Lost & Found AI — Hackathon Prototype
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

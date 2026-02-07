@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: lost-found-ai-backend
+    runtime: python
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: python backend/app.py
+    plan: free

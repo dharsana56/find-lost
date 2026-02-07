@@ -1,0 +1,16 @@
+We use pre-trained computer vision and NLP models to extract embeddings.
+Cosine similarity gives a confidence score.
+AI only recommends matches; final verification is human-driven.
+
+-----------------------------------------
+
+
+* Similar type of lost items found
+eg. if a lost mobile is blue in colour and the phone case is brown in colour and the company and the phone model is also the same, we get confused
+
+in order to rectify it, we can come up with a solution like asking consecutive relevant questions like where did you lose it? which brand is it? what is the wallpaper of your mobile? what is the emergency numbers you have set in your mobile? and so on.......
+
+this makes the accuracy rate better
+
+* “Pure semantic similarity can decrease with longer descriptions due to contextual noise.
+To handle this, we extract key entities like brand, model, color, and case details and combine keyword matching with semantic similarity for stable accuracy.”

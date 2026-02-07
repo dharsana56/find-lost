@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Report Lost | Lost & Found AI</title>
+
+  <link rel="stylesheet" href="./style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+  <header class="header">
+    <nav class="nav">
+      <div class="logo">Lost & Found <span>AI</span></div>
+
+      <ul class="nav-links">
+        <li><a href="./index.html">Home</a></li>
+        <li><a href="./lost.html">Report Lost</a></li>
+        <li><a href="./found.html">Report Found</a></li>
+        <li><a href="./ai.html">AI Matching</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a class="btn btn-outline" href="./signin.html?role=lost">Lost Login</a>
+        <a class="btn btn-primary" href="./signin.html?role=found">Found Login</a>
+        <a class="btn btn-secondary" href="./signup.html">Sign Up</a>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h1 class="page-title">Report Lost Item</h1>
+    <p class="sub">Fill details clearly (brand, model, color, unique marks) for better AI matching.</p>
+
+    <div class="form">
+      <div class="row">
+        <label>Item Type</label>
+        <input id="lostType" type="text" placeholder="Phone / Wallet / Keys" />
+      </div>
+
+      <div class="row">
+        <label>Description</label>
+        <textarea id="lostDesc" rows="6" placeholder="Example: Samsung Galaxy A55 blue phone with brown kitty case..."></textarea>
+      </div>
+
+      <div class="row">
+        <label>Last Seen Location</label>
+        <input id="lostLoc" type="text" placeholder="Cafeteria bench / Block A / Library" />
+      </div>
+
+      <div class="form-actions">
+        <a class="btn btn-secondary" href="./ai.html">Go to AI Matching</a>
+        <button class="btn btn-primary" type="button" id="saveLost">Submit Lost Report</button>
+      </div>
+
+      <div class="note">
+        <b>Tip:</b> Include case pattern, scratches, stickers, wallpaper details to increase confidence.
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">© Lost & Found AI — Hackathon Prototype</footer>
+
+  <script src="./script.js"></script>
+
+  <script>
+    document.getElementById("saveLost").addEventListener("click", () => {
+      const payload = {
+        itemType: document.getElementById("lostType").value.trim(),
+        description: document.getElementById("lostDesc").value.trim(),
+        location: document.getElementById("lostLoc").value.trim(),
+        createdAt: new Date().toISOString()
+      };
+
+      const list = JSON.parse(localStorage.getItem("lost_reports") || "[]");
+      list.unshift(payload);
+      localStorage.setItem("lost_reports", JSON.stringify(list));
+
+      alert("✅ Lost report saved (prototype). Now open AI Matching to compare.");
+
+      document.addEventListener("DOMContentLoaded", () => requireRole("lost"));
+
+    });
+  </script>
+</body>
+</html>
